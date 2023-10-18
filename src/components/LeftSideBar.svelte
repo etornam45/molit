@@ -5,31 +5,31 @@
 	import Square from "../icons/square.svelte";
 	import TextIcon from "../icons/text-icon.svelte";
 	import Triangle from "../icons/triangle.svelte";
+	import IconSlot from "./IconSlot.svelte";
 
 </script>
-<aside class="h-full bg border-r b-color w-[48px]">
+<aside class="h-full bg border-r b-color w-fit ">
 
     <!-- Cursors and shapes -->
     <div class="cursors">
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
+        <IconSlot >
             <CursorSelect />
-        </div>
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
+        </IconSlot>
+        <IconSlot>
             <PenNib />
-        </div>
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
-            <Square />
-        </div>
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
+        </IconSlot>
+        <IconSlot>
+            <Square/>
+        </IconSlot>
+        <IconSlot>
             <Triangle />
-        </div>
-        
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
+        </IconSlot>
+        <IconSlot> 
             <PolygonThin />
-        </div>
-        <div class="icons bg-slate-700  hover:bg-emerald-500 hover:shadow-md cursor-pointer flex items-center justify-center py-2 m-2 rounded">
+        </IconSlot>
+        <IconSlot>
             <TextIcon />
-        </div>
+        </IconSlot>
     </div>
 
 </aside>
