@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Cursor from '../icons/cursor.svelte';
+	// import Cursor from '../icons/cursor.svelte';
 
 	const cursor_pointer = {
 		x: Number(),
@@ -13,40 +13,45 @@
 		y: 0
 	};
 
-	let art_board_properties;
+	let art_board_properties: DOMRect;
 	let shapes = [];
 
 	let art_board: HTMLElement;
 
-	// const hundle_mouse_move = (event) => {
-	// 	cursor_pointer.x = event.pageX;
-	// 	cursor_pointer.y = event.pageY;
-	// }
 
 	onMount(() => {
 		art_board = document.getElementById('ArtBoard') as HTMLElement;
 		art_board_properties = art_board.getBoundingClientRect();
 	});
 
-	const hundle_mouse_up = (event) => {
+	const hundle_mouse_up = (event: MouseEvent) => {
 		mouse_cliked = false;
 	};
 
-	const hundle_mouse_down = (event) => {
+	const hundle_mouse_down = (event: MouseEvent) => {
 		mouse_cliked = true;
 		set_art_board_cursor(event.pageX, event.pageY);
 	};
 
-	const hundle_mouse_move = (event) => {
+	const hundle_mouse_move = (event: MouseEvent) => {
+
+		// Set user cursor position
+		set_user_cursor_position(event.pageX, event.pageY);
+
 		if (mouse_cliked) {
 			set_art_board_cursor(event.pageX, event.pageY);
 		}
 	};
 
-	const set_art_board_cursor = (pageX, pageY) => {
+	const set_art_board_cursor = (pageX: number, pageY: number) => {
 		art_board_cursor.x = pageX - art_board_properties.x;
 		art_board_cursor.y = pageY - art_board_properties.y;
 	};
+
+	const set_user_cursor_position = (pageX: number, pageY: number) => {
+		cursor_pointer.x = pageX;
+		cursor_pointer.y = pageY;
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
