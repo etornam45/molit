@@ -11,7 +11,7 @@ import Header from '../components/Header.svelte';
 	<Header />
 
 	<!-- Main UI -->
-	<div class="bg-black/80 h-full flex items-center justify-between">
+	<div class="bg-black/80 h-full flex items-center justify-between overflow-hidden">
 		<!-- Left Side Bar -->
 		<LeftSideBar />
 
