@@ -12,3 +12,12 @@
         @apply bg-[#181820] text-[#a8a8a8];
     }
 }
+
+
+.icons.selected svg path{
+    fill: #c3f1e2;
+}
+
+.icons{
+    transition: background 350ms;
+}
