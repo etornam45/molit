@@ -1,8 +1,8 @@
 <script>
-	import BlackHoleEmoji from "../icons/black-hole-emoji.svelte";
-import Intersect from "../icons/intersect.svelte";
-	import Play from "../icons/play.svelte";
-	import Unoin from "../icons/unoin.svelte";
+	import BlackHoleEmoji from "./icons/Header/black-hole-emoji.svelte";
+    import Intersect from "./icons/Header/intersect.svelte";
+	import Play from "./icons/Header/play.svelte";
+	import Unoin from "./icons/Header/unoin.svelte";
 
 
 </script>
@@ -24,7 +24,7 @@ import Intersect from "../icons/intersect.svelte";
             </div>
         </div>
         <!-- Control -->
-        <div class="bg-slate-500 hover:bg-emerald-600 cursor-pointer mr-3 rounded-full w-8 h-8 flex items-center justify-center gap-2">
+        <div class="bg-slate-500 hover:bg-emerald-400 cursor-pointer w-8 h-8 flex items-center justify-center gap-2">
             <Play />
         </div>
     </nav>
