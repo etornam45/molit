@@ -1,14 +1,14 @@
 <script>
-	import CursorSelect from '../icons/cursor-select.svelte';
-	import PenNib from '../icons/pen-nib.svelte';
-	import PolygonThin from '../icons/polygon-thin.svelte';
-	import Square from '../icons/square.svelte';
-	import TextIcon from '../icons/text-icon.svelte';
-	import Triangle from '../icons/triangle.svelte';
-	import IconSlot from './IconSlot.svelte';
+	import CursorSelect from './icons/LeftSideBar/cursor-select.svelte';
+	import PenNib from './icons/LeftSideBar/pen-nib.svelte';
+	import PolygonThin from './icons/LeftSideBar/polygon-thin.svelte';
+	import Square from './icons/LeftSideBar/square.svelte';
+	import TextIcon from './icons/LeftSideBar/text-icon.svelte';
+	import Triangle from './icons/LeftSideBar/triangle.svelte';
+	import IconSlot from './LeftSideBar/IconSlot.svelte';
 
 	import { selectedCursor } from '$lib/stores';
-	import Cursor from '../icons/cursor.svelte';
+	import Cursor from './icons/cursor.svelte';
 
 	/**
 	 * @type {string | undefined}
