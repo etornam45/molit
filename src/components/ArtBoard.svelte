@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { cursorPosition, selectedCursor } from '$lib/stores';
-	import { generateKey } from '$lib';
-	import { generatePenPath } from '$lib/functions';
+	import { cursorPosition, selectedCursor, selectedShape } from '$lib/stores';
+	import { generateColor, generateKey, generateSquarePath } from '$lib';
+	import { generatePenPath } from '$lib';
+	import { generateTrianglePath } from '$lib/functions';
 
 	const cursor_pointer = { x: Number(), y: Number() };
 
 	let mouse_cliked: boolean;
+	let mse_clk_temp: boolean;
 	let art_board_cursor: Point = { x: 0, y: 0 };
 	let current_shape_id: string;
 	let otheer_cursor = { x: 0, y: 0 };
@@ -17,7 +19,6 @@
 		x: number;
 		y: number;
 	}
-
 	interface Shape {
 		type: string;
 		points: Point[];
@@ -59,6 +60,7 @@
 				current_shape_id = generateKey();
 			}
 			mouse_cliked = true;
+			mse_clk_temp = true;
 			set_art_board_cursor(event.pageX, event.pageY);
 
 			switch ($selectedCursor) {
@@ -77,10 +79,25 @@
 					console.log(shapes.size);
 					break;
 				case 'Pointer':
+					if(shapes.has(event.target?.getAttribute('id'))){
+						selectedShape.set(event.target?.getAttribute('id'));
+					}
 					break;
 				case 'Triangle':
+					if (!shapes.has(current_shape_id)) {
+						shapes.set(current_shape_id, {
+							type: 'Triangle',
+							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
+						});
+					}
 					break;
 				case 'Square':
+					if (!shapes.has(current_shape_id)) {
+						shapes.set(current_shape_id, {
+							type: 'Square',
+							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
+						});
+					}
 					break;
 				default:
 					// Do nothing
@@ -109,8 +126,35 @@
 				case 'Pointer':
 					break;
 				case 'Triangle':
+					if (mse_clk_temp && mouse_cliked) {
+						let _shape = shapes.get(current_shape_id) as Shape;
+						_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
+						shapes.set(current_shape_id, _shape);
+						shapes = shapes;
+					}
 					break;
 				case 'Square':
+					if (mse_clk_temp && mouse_cliked) {
+						let _shape = shapes.get(current_shape_id) as Shape;
+						if (event.ctrlKey /**Do Snaping to pefect square*/) {
+							if (
+								Math.sqrt(_shape.points[0].x - art_board_cursor.x) <
+								Math.sqrt(_shape.points[0].y - art_board_cursor.y)
+							) {
+								// Snap to pefect square on X axis
+								_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.x };
+							} else {
+								// Snap to pefect square on Y axis
+								_shape.points[1] = { x: art_board_cursor.y, y: art_board_cursor.y };
+							}
+						} else {
+							// Don't snap
+							_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
+						}
+
+						shapes.set(current_shape_id, _shape);
+						shapes = shapes;
+					}
 					break;
 				default:
 					// Do nothing
@@ -121,6 +165,8 @@
 	};
 
 	const hundle_mouse_up = (event: MouseEvent) => {
+		mse_clk_temp = false;
+
 		switch ($selectedCursor) {
 			case 'Pen':
 				if (event.button == 1) {
@@ -135,8 +181,10 @@
 				mouse_cliked = false;
 				break;
 			case 'Triangle':
+				mouse_cliked = false;
 				break;
 			case 'Square':
+				mouse_cliked = false;
 				break;
 			default:
 				// Do nothing
@@ -169,7 +217,15 @@
 		<circle cx={art_board_cursor.x} cy={art_board_cursor.y} r="15" fill="none" stroke="indigo" />
 		{#each shapesDraw as { id, type, points } (id)}
 			{#if type == 'Pen'}
-				<path d={generatePenPath(points)} stroke='black' fill='none'/>
+				<path id={id} d={generatePenPath(points)} stroke="black" fill={generateColor()} />
+			{/if}
+
+			{#if type == 'Square' && (points.length > 1 || points.length == 2)}
+				<path id="{id}" d={generateSquarePath(points)} stroke="black" fill={generateColor()} />
+			{/if}
+
+			{#if type == 'Triangle' && (points.length > 1 || points.length == 2)}
+				<path id={id} d={generateTrianglePath(points)} stroke="black" fill={generateColor()} />
 			{/if}
 		{/each}
 	</svg>
