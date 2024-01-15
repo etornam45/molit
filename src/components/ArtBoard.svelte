@@ -50,7 +50,7 @@
 				...value
 			});
 		});
-		console.log(shapesDraw);
+		console.log(shapes);
 	}
 	const hundle_mouse_down = (event: MouseEvent) => {
 		// Check if the mouse mouse button is left
@@ -66,6 +66,7 @@
 			switch ($selectedCursor) {
 				case 'Pen':
 					if (!shapes.has(current_shape_id)) {
+						current_shape_id = current_shape_id == undefined? generateKey() : current_shape_id;
 						shapes.set(current_shape_id, {
 							type: 'Pen',
 							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
@@ -79,7 +80,7 @@
 					console.log(shapes.size);
 					break;
 				case 'Pointer':
-					if(shapes.has(event.target?.getAttribute('id'))){
+					if (shapes.has(event.target?.getAttribute('id'))) {
 						selectedShape.set(event.target?.getAttribute('id'));
 					}
 					break;
@@ -103,10 +104,10 @@
 					// Do nothing
 					break;
 			}
-			shapes.forEach(function (value, key) {
-				console.log(key);
-				console.table(value.points);
-			});
+			// shapes.forEach(function (value, key) {
+			// 	console.log(key);
+			// 	console.table(value.points);
+			// });
 		}
 	};
 
@@ -128,7 +129,27 @@
 				case 'Triangle':
 					if (mse_clk_temp && mouse_cliked) {
 						let _shape = shapes.get(current_shape_id) as Shape;
-						_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
+						if (event.ctrlKey /**Do Snaping to pefect square*/) {
+							let x_len = Math.sqrt((_shape.points[0].x - art_board_cursor.x) ** 2);
+							let y_len = Math.sqrt((_shape.points[0].y - art_board_cursor.y) ** 2);
+
+							if (x_len < y_len) {
+								// Snap to pefect square on X axis
+								_shape.points[1] = {
+									x: art_board_cursor.x,
+									y: art_board_cursor.y - (y_len - x_len)
+								};
+							} else {
+								// Snap to pefect square on Y axis
+								_shape.points[1] = {
+									x: art_board_cursor.x - (x_len - y_len),
+									y: art_board_cursor.y
+								};
+							}
+						} else {
+							// Don't snap
+							_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
+						}
 						shapes.set(current_shape_id, _shape);
 						shapes = shapes;
 					}
@@ -137,15 +158,21 @@
 					if (mse_clk_temp && mouse_cliked) {
 						let _shape = shapes.get(current_shape_id) as Shape;
 						if (event.ctrlKey /**Do Snaping to pefect square*/) {
-							if (
-								Math.sqrt(_shape.points[0].x - art_board_cursor.x) <
-								Math.sqrt(_shape.points[0].y - art_board_cursor.y)
-							) {
+							let x_len = Math.sqrt((_shape.points[0].x - art_board_cursor.x) ** 2);
+							let y_len = Math.sqrt((_shape.points[0].y - art_board_cursor.y) ** 2);
+
+							if (x_len < y_len) {
 								// Snap to pefect square on X axis
-								_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.x };
+								_shape.points[1] = {
+									x: art_board_cursor.x,
+									y: art_board_cursor.y - (y_len - x_len)
+								};
 							} else {
 								// Snap to pefect square on Y axis
-								_shape.points[1] = { x: art_board_cursor.y, y: art_board_cursor.y };
+								_shape.points[1] = {
+									x: art_board_cursor.x - (x_len - y_len),
+									y: art_board_cursor.y
+								};
 							}
 						} else {
 							// Don't snap
@@ -217,15 +244,15 @@
 		<circle cx={art_board_cursor.x} cy={art_board_cursor.y} r="15" fill="none" stroke="indigo" />
 		{#each shapesDraw as { id, type, points } (id)}
 			{#if type == 'Pen'}
-				<path id={id} d={generatePenPath(points)} stroke="black" fill={generateColor()} />
+				<path {id} d={generatePenPath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
 			{/if}
 
 			{#if type == 'Square' && (points.length > 1 || points.length == 2)}
-				<path id="{id}" d={generateSquarePath(points)} stroke="black" fill={generateColor()} />
+				<path {id} d={generateSquarePath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
 			{/if}
 
 			{#if type == 'Triangle' && (points.length > 1 || points.length == 2)}
-				<path id={id} d={generateTrianglePath(points)} stroke="black" fill={generateColor()} />
+				<path {id} d={generateTrianglePath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
 			{/if}
 		{/each}
 	</svg>

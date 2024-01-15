@@ -65,7 +65,8 @@ export function generateTrianglePath(Points) {
  * @returns {string}
  */
 export function generateColor() {
-	return `rgb(${randomNumber_255()},${randomNumber_255()},${randomNumber_255()})`;
+	const color =  `rgb(${randomNumber_255()},${randomNumber_255()},${randomNumber_255()})`;
+	return color
 }
 
 /**
