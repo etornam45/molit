@@ -19,7 +19,6 @@
 		_selectedCursor = value;
 	});
 	/**
-	 *
 	 * @param Cursor {string}
 	 */
 	function updateSelectedCursor(Cursor) {
@@ -28,26 +27,32 @@
 
 </script>
 
-<aside class="h-full bg border-r b-color w-fit">
+<aside class="h-full bg border-r b-color w-fit flex flex-col justify-between">
 	<!-- Cursors and shapes -->
 	<div class="cursors">
-		<IconSlot on:select={() => updateSelectedCursor('Pointer')} _class={_selectedCursor == "Pointer"? _selectedCursor: ""}>
+		<IconSlot title="Pointer" on:select={() => updateSelectedCursor('Pointer')} _class={_selectedCursor == "Pointer"? _selectedCursor: ""}>
 			<CursorSelect />
 		</IconSlot>
-		<IconSlot on:select={() => updateSelectedCursor('Pen')} _class={_selectedCursor == "Pen"? _selectedCursor: ""}>
+		<IconSlot title="Pen" on:select={() => updateSelectedCursor('Pen')} _class={_selectedCursor == "Pen"? _selectedCursor: ""}>
 			<PenNib />
 		</IconSlot>
-		<IconSlot on:select={() => updateSelectedCursor('Square')} _class={_selectedCursor == "Square"? _selectedCursor: ""}>
+		<IconSlot title="Square" on:select={() => updateSelectedCursor('Square')} _class={_selectedCursor == "Square"? _selectedCursor: ""}>
 			<Square />
 		</IconSlot>
-		<IconSlot on:select={() => updateSelectedCursor('Triangle')} _class={_selectedCursor == "Triangle"? _selectedCursor: ""}>
+		<IconSlot title={"Triangle"} on:select={() => updateSelectedCursor('Triangle')} _class={_selectedCursor == "Triangle"? _selectedCursor: ""}>
 			<Triangle />
 		</IconSlot>
-		<IconSlot on:select={() => updateSelectedCursor('Polygon')} _class={_selectedCursor == "Polygon"? _selectedCursor: ""}>
+		<IconSlot title="Polygon" on:select={() => updateSelectedCursor('Polygon')} _class={_selectedCursor == "Polygon"? _selectedCursor: ""}>
 			<PolygonThin />
 		</IconSlot>
-		<IconSlot on:select={() => updateSelectedCursor('Text')} _class={_selectedCursor == "Text"? _selectedCursor: ""}>
+		<IconSlot title="Text" on:select={() => updateSelectedCursor('Text')} _class={_selectedCursor == "Text"? _selectedCursor: ""}>
 			<TextIcon />
+		</IconSlot>
+	</div>
+
+	<div>
+		<IconSlot title="Delete" _class="Delete" on:select={() => {}}>
+			Del
 		</IconSlot>
 	</div>
 </aside>

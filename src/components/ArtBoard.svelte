@@ -11,7 +11,7 @@
 	let mse_clk_temp: boolean;
 	let art_board_cursor: Point = { x: 0, y: 0 };
 	let current_shape_id: string;
-	let otheer_cursor = { x: 0, y: 0 };
+	// let otheer_cursor = { x: 0, y: 0 };
 
 	let art_board_properties: DOMRect;
 
@@ -52,7 +52,7 @@
 		});
 		console.log(shapes);
 	}
-	const hundle_mouse_down = (event: MouseEvent) => {
+	const handle_mouse_down = (event: MouseEvent) => {
 		// Check if the mouse mouse button is left
 		console.log('clicked', event.button, event.buttons);
 		if (event.button == 0) {
@@ -66,7 +66,7 @@
 			switch ($selectedCursor) {
 				case 'Pen':
 					if (!shapes.has(current_shape_id)) {
-						current_shape_id = current_shape_id == undefined? generateKey() : current_shape_id;
+						current_shape_id = current_shape_id == undefined ? generateKey() : current_shape_id;
 						shapes.set(current_shape_id, {
 							type: 'Pen',
 							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
@@ -80,7 +80,9 @@
 					console.log(shapes.size);
 					break;
 				case 'Pointer':
+					//@ts-ignore
 					if (shapes.has(event.target?.getAttribute('id'))) {
+						//@ts-ignore
 						selectedShape.set(event.target?.getAttribute('id'));
 					}
 					break;
@@ -104,14 +106,10 @@
 					// Do nothing
 					break;
 			}
-			// shapes.forEach(function (value, key) {
-			// 	console.log(key);
-			// 	console.table(value.points);
-			// });
 		}
 	};
 
-	const hundle_mouse_move = (event: MouseEvent) => {
+	const handle_mouse_move = (event: MouseEvent) => {
 		// console.log(event);
 
 		// Set user cursor position
@@ -191,12 +189,14 @@
 		}
 	};
 
-	const hundle_mouse_up = (event: MouseEvent) => {
+	const handle_mouse_up = (event: MouseEvent) => {
 		mse_clk_temp = false;
+		console.log(event);
 
 		switch ($selectedCursor) {
 			case 'Pen':
-				if (event.button == 1) {
+				if (event.ctrlKey) {
+					event.preventDefault();
 					// Release pen when mouse wheel is clicked
 					console.log('Pen mode selected');
 					mouse_cliked = false;
@@ -227,13 +227,25 @@
 		(cursor_pointer.x = pageX), (cursor_pointer.y = pageY);
 		cursorPosition.set({ x: cursor_pointer.x, y: cursor_pointer.y });
 	};
+
+	const handle_escape = (event: KeyboardEvent) => {
+		console.log(event);
+	};
+
+	onMount(() => {
+		window.addEventListener('keyup', (event: KeyboardEvent) => {
+			if(event.code == "Escape"){
+				mouse_cliked = false
+			}
+		});
+	});
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <main
-	on:mousedown={hundle_mouse_down}
-	on:mouseup={hundle_mouse_up}
-	on:mousemove={hundle_mouse_move}
+	on:mousedown={handle_mouse_down}
+	on:mouseup={handle_mouse_up}
+	on:mousemove={handle_mouse_move}
 	class="art-board cursor-crosshair w-full h-full overflow-scroll relative flex-1 p-10"
 >
 	<svg
@@ -244,15 +256,33 @@
 		<circle cx={art_board_cursor.x} cy={art_board_cursor.y} r="15" fill="none" stroke="indigo" />
 		{#each shapesDraw as { id, type, points } (id)}
 			{#if type == 'Pen'}
-				<path {id} d={generatePenPath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
+				<path
+					{id}
+					d={generatePenPath(points)}
+					stroke="black"
+					fill={generateColor()}
+					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
+				/>
 			{/if}
 
 			{#if type == 'Square' && (points.length > 1 || points.length == 2)}
-				<path {id} d={generateSquarePath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
+				<path
+					{id}
+					d={generateSquarePath(points)}
+					stroke="black"
+					fill={generateColor()}
+					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
+				/>
 			{/if}
 
 			{#if type == 'Triangle' && (points.length > 1 || points.length == 2)}
-				<path {id} d={generateTrianglePath(points)} stroke="black" fill={generateColor()} class="{$selectedShape == id? 'outline-1 outline-fuchsia-600 outline-dashed': ''}"/>
+				<path
+					{id}
+					d={generateTrianglePath(points)}
+					stroke="black"
+					fill={generateColor()}
+					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
+				/>
 			{/if}
 		{/each}
 	</svg>

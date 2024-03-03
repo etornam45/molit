@@ -7,6 +7,7 @@
 	 * @type {string}
 	 */
      export let _class
+	 export let title = ""
 
 	function sayHello() {
 		dispatch('select');
@@ -17,6 +18,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     on:click={sayHello}
+	title="{title}"
 	class="{_class != ""? "bg-slate-600 border border-gray-400 selected": "bg-[transparent]"} icons hover:border hover:border-gray-400 cursor-pointer flex items-center justify-center w-9 h-9"
 >
 	<slot />
