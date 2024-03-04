@@ -1,9 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { cursorPosition, selectedCursor, selectedShape } from '$lib/stores';
-	import { generateColor, generateKey, generateSquarePath } from '$lib';
-	import { generatePenPath } from '$lib';
+	import {
+		cursorPosition,
+		selectedCursor,
+		selectedShape,
+		shapesDrawn,
+		penPointsActiveNumber
+	} from '$lib/stores';
+	import { generateColor, generateKey, generateSquarePath, generatePenPath } from '$lib';
 	import { generateTrianglePath } from '$lib/functions';
+
+	import { shapes } from '$lib/stores';
+	import type { Point, Shape } from '$lib/types';
+	import { CONSTANTS } from '$lib/constants';
 
 	const cursor_pointer = { x: Number(), y: Number() };
 
@@ -11,21 +20,8 @@
 	let mse_clk_temp: boolean;
 	let art_board_cursor: Point = { x: 0, y: 0 };
 	let current_shape_id: string;
-	// let otheer_cursor = { x: 0, y: 0 };
 
 	let art_board_properties: DOMRect;
-
-	interface Point {
-		x: number;
-		y: number;
-	}
-	interface Shape {
-		type: string;
-		points: Point[];
-	}
-
-	let shapes: Map<string, Shape> = new Map();
-	let shapesDraw: any = [];
 
 	let art_board: HTMLElement;
 	let main_board: HTMLElement;
@@ -43,14 +39,19 @@
 	}
 
 	$: {
-		shapesDraw = [];
-		shapes.forEach(function (value, key) {
-			shapesDraw.push({
+		shapesDrawn.set([]);
+		$shapes.forEach(function (value, key) {
+			const data = {
 				id: key != undefined ? key : generateKey(),
 				...value
+			};
+
+			shapesDrawn.update((shape) => {
+				shape.push(data);
+				return shape;
 			});
 		});
-		console.log(shapes);
+		console.log($shapes, $shapesDrawn);
 	}
 	const handle_mouse_down = (event: MouseEvent) => {
 		// Check if the mouse mouse button is left
@@ -65,40 +66,52 @@
 
 			switch ($selectedCursor) {
 				case 'Pen':
-					if (!shapes.has(current_shape_id)) {
+					if (!$shapes.has(current_shape_id)) {
 						current_shape_id = current_shape_id == undefined ? generateKey() : current_shape_id;
-						shapes.set(current_shape_id, {
-							type: 'Pen',
-							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, {
+								type: 'Pen',
+								points: [{ x: art_board_cursor.x, y: art_board_cursor.y }],
+								preferences: CONSTANTS.defaultPreferences
+							});
 						});
 					} else {
-						let _shape = shapes.get(current_shape_id) as Shape;
+						let _shape = $shapes.get(current_shape_id) as Shape;
 						_shape?.points.push({ x: art_board_cursor.x, y: art_board_cursor.y });
-						shapes.set(current_shape_id, _shape);
-						shapes = shapes;
+						penPointsActiveNumber.set(_shape.points.length); // Off-by-one error expected
+
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, _shape);
+						});
 					}
-					console.log(shapes.size);
+					console.log($shapes.size);
 					break;
 				case 'Pointer':
 					//@ts-ignore
-					if (shapes.has(event.target?.getAttribute('id'))) {
+					if ($shapes.has(event.target?.getAttribute('id'))) {
 						//@ts-ignore
 						selectedShape.set(event.target?.getAttribute('id'));
 					}
 					break;
 				case 'Triangle':
-					if (!shapes.has(current_shape_id)) {
-						shapes.set(current_shape_id, {
-							type: 'Triangle',
-							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
+					if (!$shapes.has(current_shape_id)) {
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, {
+								type: 'Triangle',
+								points: [{ x: art_board_cursor.x, y: art_board_cursor.y }],
+								preferences: CONSTANTS.defaultPreferences
+							});
 						});
 					}
 					break;
 				case 'Square':
-					if (!shapes.has(current_shape_id)) {
-						shapes.set(current_shape_id, {
-							type: 'Square',
-							points: [{ x: art_board_cursor.x, y: art_board_cursor.y }]
+					if (!$shapes.has(current_shape_id)) {
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, {
+								type: 'Square',
+								points: [{ x: art_board_cursor.x, y: art_board_cursor.y }],
+								preferences: CONSTANTS.defaultPreferences
+							});
 						});
 					}
 					break;
@@ -110,8 +123,6 @@
 	};
 
 	const handle_mouse_move = (event: MouseEvent) => {
-		// console.log(event);
-
 		// Set user cursor position
 		set_user_cursor_position(event.pageX, event.pageY);
 
@@ -120,13 +131,24 @@
 
 			switch ($selectedCursor) {
 				case 'Pen':
-					// Handle the bezier move here.
+					const activeShape = $shapes.get(current_shape_id) as Shape;
+					let points = activeShape.points;
+					points[$penPointsActiveNumber] = { ...art_board_cursor };
+					points = points // This is done to update it reactively. 
+					shapes.update((shape) => {
+						shape.set(current_shape_id, {
+							type: activeShape.type,
+							preferences: activeShape.preferences,
+							points: points
+						});
+						return shape;
+					});
 					break;
 				case 'Pointer':
 					break;
 				case 'Triangle':
 					if (mse_clk_temp && mouse_cliked) {
-						let _shape = shapes.get(current_shape_id) as Shape;
+						let _shape = $shapes.get(current_shape_id) as Shape;
 						if (event.ctrlKey /**Do Snaping to pefect square*/) {
 							let x_len = Math.sqrt((_shape.points[0].x - art_board_cursor.x) ** 2);
 							let y_len = Math.sqrt((_shape.points[0].y - art_board_cursor.y) ** 2);
@@ -148,13 +170,14 @@
 							// Don't snap
 							_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
 						}
-						shapes.set(current_shape_id, _shape);
-						shapes = shapes;
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, _shape);
+						});
 					}
 					break;
 				case 'Square':
 					if (mse_clk_temp && mouse_cliked) {
-						let _shape = shapes.get(current_shape_id) as Shape;
+						let _shape = $shapes.get(current_shape_id) as Shape;
 						if (event.ctrlKey /**Do Snaping to pefect square*/) {
 							let x_len = Math.sqrt((_shape.points[0].x - art_board_cursor.x) ** 2);
 							let y_len = Math.sqrt((_shape.points[0].y - art_board_cursor.y) ** 2);
@@ -173,12 +196,12 @@
 								};
 							}
 						} else {
-							// Don't snap
 							_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
 						}
 
-						shapes.set(current_shape_id, _shape);
-						shapes = shapes;
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, _shape);
+						});
 					}
 					break;
 				default:
@@ -228,14 +251,10 @@
 		cursorPosition.set({ x: cursor_pointer.x, y: cursor_pointer.y });
 	};
 
-	const handle_escape = (event: KeyboardEvent) => {
-		console.log(event);
-	};
-
 	onMount(() => {
 		window.addEventListener('keyup', (event: KeyboardEvent) => {
-			if(event.code == "Escape"){
-				mouse_cliked = false
+			if (event.code == 'Escape') {
+				mouse_cliked = false;
 			}
 		});
 	});
@@ -254,13 +273,14 @@
 		style="margin: 0 auto;"
 	>
 		<circle cx={art_board_cursor.x} cy={art_board_cursor.y} r="15" fill="none" stroke="indigo" />
-		{#each shapesDraw as { id, type, points } (id)}
+		{#each $shapesDrawn as { id, type, preferences, points } (id)}
 			{#if type == 'Pen'}
 				<path
 					{id}
 					d={generatePenPath(points)}
-					stroke="black"
-					fill={generateColor()}
+					stroke={preferences.stroke.color}
+					stroke-width={preferences.stroke.width}
+					fill={preferences.background}
 					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
 				/>
 			{/if}
@@ -269,8 +289,9 @@
 				<path
 					{id}
 					d={generateSquarePath(points)}
-					stroke="black"
-					fill={generateColor()}
+					stroke={preferences.stroke.color}
+					stroke-width={preferences.stroke.width}
+					fill={preferences.background}
 					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
 				/>
 			{/if}
@@ -279,8 +300,9 @@
 				<path
 					{id}
 					d={generateTrianglePath(points)}
-					stroke="black"
-					fill={generateColor()}
+					stroke={preferences.stroke.color}
+					stroke-width={preferences.stroke.width}
+					fill={preferences.background}
 					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
 				/>
 			{/if}
