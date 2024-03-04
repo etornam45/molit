@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import CursorSelect from './icons/LeftSideBar/cursor-select.svelte';
 	import PenNib from './icons/LeftSideBar/pen-nib.svelte';
 	import PolygonThin from './icons/LeftSideBar/polygon-thin.svelte';
@@ -6,23 +6,25 @@
 	import TextIcon from './icons/LeftSideBar/text-icon.svelte';
 	import Triangle from './icons/LeftSideBar/triangle.svelte';
 	import IconSlot from './LeftSideBar/IconSlot.svelte';
+	import Delete from './icons/LeftSideBar/delete.svelte';
+	// @ts-ignore
+	import { selectedCursor, selectedShape, shapes } from '$lib/stores';
 
-	import { selectedCursor } from '$lib/stores';
-	import Cursor from './icons/cursor.svelte';
+	let _selectedCursor: string;
 
-	/**
-	 * @type {string | undefined}
-	 */
-	let _selectedCursor;
-
-	selectedCursor.subscribe((value) => {
+	selectedCursor.subscribe((value: string) => {
 		_selectedCursor = value;
 	});
-	/**
-	 * @param Cursor {string}
-	 */
-	function updateSelectedCursor(Cursor) {
-		selectedCursor.set(Cursor);
+
+	function updateSelectedCursor(cursor: string) {
+		selectedCursor.set(cursor);
+	}
+
+	function deleteSelectedShape() {
+		shapes.update((value) => {
+			value.delete($selectedShape);
+			return value; 
+		});
 	}
 
 </script>
@@ -51,8 +53,8 @@
 	</div>
 
 	<div>
-		<IconSlot title="Delete" _class="Delete" on:select={() => {}}>
-			Del
+		<IconSlot title="Delete" _class="Delete" on:select={deleteSelectedShape}>
+			<Delete />
 		</IconSlot>
 	</div>
 </aside>
