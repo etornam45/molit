@@ -14,3 +14,8 @@ export const selectedLayer = writable();
 export const shapes = writable<Map<string, Shape>>(new Map());
 
 export const shapesDrawn = writable<ShapesDrawn[]>()
+
+
+
+// ArtBoard Stores 
+export const penPointsActiveNumber = writable<number>()
