@@ -27,3 +27,5 @@ export interface ShapesDrawn {
     id: string;
     preferences: Preferences;
 }
+
+export type Cursors = "Pen" | "Triangle" | "Square" | "Pentagon" | "Text" | "Pointer";
