@@ -1,38 +1,47 @@
-# create-svelte
+<!-- ReadMe Project Documentation Template -->
+# ` molit ☄️`
+An svg based drawing web app written in `sveltekit`
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Tools used to develop `molit ☄️`.  
+- SvelteKit
+- Tailwind CSS
+- NodeJS
 
-## Creating a project
+## Setup Project 
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Clone the reposotory
+```bash
+$ git clone https://github.com/etornam45/molit.git 
+```
+### Install dependencies for the project
+
+> You need node and npm installed to run this project 
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+$ cd molit
+$ npm install
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Run `molit ☄️` in dev mode
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+$ npm run dev -- --open --host
+# --open        opens the web app in the browser
+# --host        hosts the web app on a local network if available 
 ```
 
-## Building
+### Build and `run` the project 
 
-To create a production version of your app:
-
-```bash
-npm run build
+```shell
+$ npm run build
+$ npm run preview -- --open --host
+# --open        opens the web app in the browser
+# --host        hosts the web app on a local network if available 
 ```
 
-You can preview the production build with `npm run preview`.
 
+****
+****
+****
+****
+****
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
