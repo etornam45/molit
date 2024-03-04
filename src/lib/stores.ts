@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
-import type { Shape, ShapesDrawn } from "./types";
+import type { Cursors, Shape, ShapesDrawn } from "./types";
 
 
 
-export const selectedCursor = writable<string>("Pointer");
+export const selectedCursor = writable<Cursors>("Pointer");
 
 export const cursorPosition = writable({x: 0, y: 0})
 
