@@ -8,7 +8,7 @@
 		penPointsActiveNumber
 	} from '$lib/stores';
 	import { generateColor, generateKey, generateSquarePath, generatePenPath } from '$lib';
-	import { generateTrianglePath } from '$lib/functions';
+	import { generatePentagonPath, generateTrianglePath } from '$lib/functions';
 
 	import { shapes } from '$lib/stores';
 	import type { Point, Shape } from '$lib/types';
@@ -115,6 +115,19 @@
 						});
 					}
 					break;
+				case 'Pentagon':
+					if (!$shapes.has(current_shape_id)) {
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, {
+								type: 'Pentagon',
+								points: [{ x: art_board_cursor.x, y: art_board_cursor.y }],
+								preferences: CONSTANTS.defaultPreferences
+							});
+						});
+					}
+					break;
+				case 'Text':
+					break;
 				default:
 					// Do nothing
 					break;
@@ -204,6 +217,15 @@
 						});
 					}
 					break;
+				case "Pentagon":
+					if (mse_clk_temp && mouse_cliked) {
+						let _shape = $shapes.get(current_shape_id) as Shape;
+						_shape.points[1] = { x: art_board_cursor.x, y: art_board_cursor.y };
+						shapes.update((shape) => {
+							return shape.set(current_shape_id, _shape);
+						});
+					}
+					break;
 				default:
 					// Do nothing
 					break;
@@ -234,6 +256,9 @@
 				mouse_cliked = false;
 				break;
 			case 'Square':
+				mouse_cliked = false;
+				break;
+			case 'Pentagon':
 				mouse_cliked = false;
 				break;
 			default:
@@ -300,6 +325,17 @@
 				<path
 					{id}
 					d={generateTrianglePath(points)}
+					stroke={preferences.stroke.color}
+					stroke-width={preferences.stroke.width}
+					fill={preferences.background}
+					class={$selectedShape == id ? 'outline-1 outline-fuchsia-600 outline-dashed' : ''}
+				/>
+			{/if}
+
+			{#if type == 'Pentagon' && points.length > 1}
+				<path
+					{id}
+					d={generatePentagonPath(points)}
 					stroke={preferences.stroke.color}
 					stroke-width={preferences.stroke.width}
 					fill={preferences.background}

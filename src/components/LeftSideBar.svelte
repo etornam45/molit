@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CursorSelect from './icons/LeftSideBar/cursor-select.svelte';
 	import PenNib from './icons/LeftSideBar/pen-nib.svelte';
-	import PolygonThin from './icons/LeftSideBar/polygon-thin.svelte';
+	import PentagonThin from './icons/LeftSideBar/polygon-thin.svelte';
 	import Square from './icons/LeftSideBar/square.svelte';
 	import TextIcon from './icons/LeftSideBar/text-icon.svelte';
 	import Triangle from './icons/LeftSideBar/triangle.svelte';
@@ -9,6 +9,7 @@
 	import Delete from './icons/LeftSideBar/delete.svelte';
 	// @ts-ignore
 	import { selectedCursor, selectedShape, shapes } from '$lib/stores';
+	import type { Cursors } from '$lib/types';
 
 	let _selectedCursor: string;
 
@@ -16,7 +17,7 @@
 		_selectedCursor = value;
 	});
 
-	function updateSelectedCursor(cursor: string) {
+	function updateSelectedCursor(cursor: Cursors) {
 		selectedCursor.set(cursor);
 	}
 
@@ -44,8 +45,8 @@
 		<IconSlot title={"Triangle"} on:select={() => updateSelectedCursor('Triangle')} _class={_selectedCursor == "Triangle"? _selectedCursor: ""}>
 			<Triangle />
 		</IconSlot>
-		<IconSlot title="Polygon" on:select={() => updateSelectedCursor('Polygon')} _class={_selectedCursor == "Polygon"? _selectedCursor: ""}>
-			<PolygonThin />
+		<IconSlot title="Pentagon" on:select={() => updateSelectedCursor('Pentagon')} _class={_selectedCursor == "Pentagon"? _selectedCursor: ""}>
+			<PentagonThin />
 		</IconSlot>
 		<IconSlot title="Text" on:select={() => updateSelectedCursor('Text')} _class={_selectedCursor == "Text"? _selectedCursor: ""}>
 			<TextIcon />
