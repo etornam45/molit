@@ -9,7 +9,7 @@ export interface Stroke{
 }
 
 export interface Shape {
-    type: string;
+    type: Cursors;
     points: Point[];
     preferences: Preferences;
 }
@@ -28,4 +28,16 @@ export interface ShapesDrawn {
     preferences: Preferences;
 }
 
-export type Cursors = "Pen" | "Triangle" | "Square" | "Pentagon" | "Text" | "Pointer";
+export type Cursors = ""|"Pen" 
+                        | "Triangle" 
+                        | "Square" 
+                        | "Pentagon" 
+                        | "Text" 
+                        | "Pointer"
+                        | "Hexagon"
+                        | "Circle"
+                        | "Star"
+                        | "Line"
+                        | "Hepatgon"
+                        | "Delete"
+                        ;

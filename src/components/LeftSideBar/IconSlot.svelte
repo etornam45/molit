@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+	import type { Cursors } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -6,8 +7,8 @@
     /**
 	 * @type {string}
 	 */
-     export let _class
-	 export let title = ""
+     export let _class: Cursors | string
+	 export let title: Cursors
 
 	function sayHello() {
 		dispatch('select');

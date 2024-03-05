@@ -7,13 +7,16 @@
 	import Triangle from './icons/LeftSideBar/triangle.svelte';
 	import IconSlot from './LeftSideBar/IconSlot.svelte';
 	import Delete from './icons/LeftSideBar/delete.svelte';
+	import Hexagon from "./icons/LeftSideBar/hexagon.svelte"
+	import Heptagon from "./icons/LeftSideBar/heptagon.svelte"
+	import CircleIcon from "./icons/LeftSideBar/circle-icon.svelte"
 	// @ts-ignore
 	import { selectedCursor, selectedShape, shapes } from '$lib/stores';
 	import type { Cursors } from '$lib/types';
 
-	let _selectedCursor: string;
+	let _selectedCursor: Cursors;
 
-	selectedCursor.subscribe((value: string) => {
+	selectedCursor.subscribe((value: Cursors) => {
 		_selectedCursor = value;
 	});
 
@@ -48,9 +51,18 @@
 		<IconSlot title="Pentagon" on:select={() => updateSelectedCursor('Pentagon')} _class={_selectedCursor == "Pentagon"? _selectedCursor: ""}>
 			<PentagonThin />
 		</IconSlot>
-		<IconSlot title="Text" on:select={() => updateSelectedCursor('Text')} _class={_selectedCursor == "Text"? _selectedCursor: ""}>
-			<TextIcon />
+		<IconSlot title="Hexagon" on:select={() => updateSelectedCursor('Hexagon')} _class={_selectedCursor == "Hexagon"? _selectedCursor: ""}>
+			<Hexagon />
 		</IconSlot>
+		<IconSlot title="Hepatgon" on:select={() => updateSelectedCursor('Hepatgon')} _class={_selectedCursor == "Hepatgon"? _selectedCursor: ""}>
+			<Heptagon />
+		</IconSlot>
+		<IconSlot title="Circle" on:select={() => updateSelectedCursor('Circle')} _class={_selectedCursor == "Circle"? _selectedCursor: ""}>
+			<CircleIcon />
+		</IconSlot>
+		<!-- <IconSlot title="Text" on:select={() => updateSelectedCursor('Text')} _class={_selectedCursor == "Text"? _selectedCursor: ""}>
+			<TextIcon />
+		</IconSlot> -->
 	</div>
 
 	<div>
